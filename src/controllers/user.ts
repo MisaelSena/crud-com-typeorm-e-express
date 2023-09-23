@@ -94,3 +94,37 @@ export const atualizaUsuario = async (req: Request, res: Response) => {
     });
   }
 };
+
+//Deletando usuário
+
+export const deletarUsuario = async (req: Request, res: Response) => {
+    const id = req.params.id_usuario;
+    
+    try {
+        const user = await AppDataSource.getRepository(User).findOne({
+            where:{
+                id: parseInt(id)
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                ok:false,
+                mensagem: "Usuário Não encontrado!"
+            });
+        }
+
+        await AppDataSource.getRepository(User).delete(user);
+        
+        return res.status(200).json({
+            ok: true,
+            mensagem: "Usuário Deletado com Sucesso!"
+        })
+    } catch (error) {
+        console.log(error, "Erro Ao Tentar Deletar Usuário!");
+        return res.status(500).json({
+            ok: false,
+            mensagem: "Erro ao tentar deletar usuário!"
+        })
+    }
+}
